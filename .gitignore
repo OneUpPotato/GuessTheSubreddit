@@ -1,3 +1,13 @@
+praw.ini
+
+subreddits.yml
+settings.yml
+
+development_files/
+
+# Shell Files
+*.sh
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

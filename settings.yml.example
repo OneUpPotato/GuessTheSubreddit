@@ -1,0 +1,54 @@
+{
+    # What subreddit should the bot use?
+    # Only really changed for testing.
+    "subreddit_name": "guessthesubreddit",
+
+    # Should the bot make a post when it starts up?
+    # This is enabled on default as the bot restarts everyday at 11PM UTC
+    "post_on_start": true,
+
+    # When the bot starts should it round to the next nearest 30 minutes (e.g 1:00PM or 1:30PM) and not post till then.
+    # Enabling this overrides post_on_start.
+    "round_30_mins_post_on_start": false,
+
+    # Should the bot check if there are any posts to close when it starts up?
+    # It has a timer every 5 minutes to check if there are posts to close regardless.
+    "check_posts_on_start": false,
+
+    # How long should a post stay open before it is locked and comments are checked?
+    # Note: This is in seconds. 3600 seconds = 1 hour, 21600 = 6 hours.
+    "post_expiry_time": 21600,
+
+    # Flair Configuration
+    "flairs": {
+        # Post Type to Flair Id
+        "post": {
+            "standard": "c1547c0c-4049-11ea-bce8-0e3a3e501ba9",
+            "multi": "cf9cf898-4049-11ea-9cd2-0e3247f312c5",
+            "fillblank": "63ee0c44-49fa-11ea-a5e2-0e9b2137d67d",
+            "jumbled": "43da7fd4-bfb9-11ea-8ba0-0ee5376e3101",
+        },
+        "user": {
+            "score": {"id":"b76716ce-4048-11ea-804a-0e638e9bf59b","text":"△{}"}
+        },
+    },
+
+    # How many points should be awarded depending on the type of post.
+    "points_by_type": {
+        "standard": 3, # Standard
+        "fillblank": 2, # Fill the Blank
+        "jumbled": 2, # Obfuscation
+        "multi": 1, # Multiple Choice
+    },
+
+    # Settings depending on the type of post.
+    "settings_by_type": {
+        "multi": {
+            # When a subreddit that is in this list is selected, there is a chance that the other subreddit will be shown with it.
+            "grouped_subreddits": [
+                ["subreddit1", "subreddit2"],		
+				["subreddit5", "subreddit6"],
+            ],
+        },
+    },
+}
