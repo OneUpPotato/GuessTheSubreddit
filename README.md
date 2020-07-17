@@ -12,5 +12,8 @@ Setting up on your side:
 * Copy the ``subreddits.yml.example`` file and rename it to ``subreddits.yml``
 * Setup a ``praw.ini`` file.
 
+## Discussion
+There is [Discord server](https://discord.gg/RCtd7qx) that you can join to talk about things related to the bot and subreddit.
+
 ## License
 The code has been released under the [MIT License](https://choosealicense.com/licenses/mit/).
