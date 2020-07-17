@@ -12,7 +12,7 @@ def load_scores():
     for flair in reddit.get_subreddit().flair(limit=None):
         try:
             username = str(flair["user"].name).lower()
-            user_to_score[username] = int(flair["flair_text"].split(" ")[0].lstrip(get_flairs()["user"]["score"]["text"].format("")))
+            user_to_score[username] = int(flair["flair_text"].split(" ")[0].replace(settings.get_flairs()["user"]["score"]["text"].format(""), ""))
         except:
             pass
 
