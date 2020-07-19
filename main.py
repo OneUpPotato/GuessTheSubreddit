@@ -33,14 +33,15 @@ def every(seconds, task):
     while True:
         sleep(max(0, next_time - time()))
 
-    try:
-        task()
-    except:
-        pass
+        try:
+            task()
+        except:
+            pass
 
-    next_time += (time() - next_time) // seconds * seconds + seconds
+        next_time += (time() - next_time) // seconds * seconds + seconds
 
 # check_posts - 300 seconds = 5 minutes.
 # submit_post - 1800 seconds = 30 minutes.
 Thread(target=lambda: every(300, check_posts)).start()
 Thread(target=lambda: every(1800, submit_post)).start()
+print("Started Threads")
