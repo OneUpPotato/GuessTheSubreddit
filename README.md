@@ -16,4 +16,4 @@ Setting up on your side:
 There is [Discord server](https://discord.gg/RCtd7qx) that you can join to talk about things related to the bot and subreddit.
 
 ## License
-The code has been released under the [MIT License](https://choosealicense.com/licenses/mit/).
+The code has been released under the [Apache License 2.0](https://github.com/OneUpPotato/GuessTheSubreddit/blob/master/LICENSE).
