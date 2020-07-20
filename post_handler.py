@@ -234,7 +234,7 @@ def submit_post(type=None):
 def close_post(post_id):
     global pid_to_info, pid_to_expiry
     post_info = pid_to_info[post_id]
-    correct_subreddit = post_info["org_sub"].lower()
+    correct_subreddit = sub("^[^a-zA-Z0-9]*|[^a-zA-Z0-9]", "", post_info["org_sub"].lower())
 
     try:
         post = get_reddit().submission(post_id)
