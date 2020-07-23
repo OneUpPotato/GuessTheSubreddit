@@ -22,6 +22,7 @@ def redact_title(title):
     title = sub(r"\s*\[?P(hoto)?S(hop)?Battles\]?\s*", "", title, flags=IGNORECASE)
     title = sub(r"\s*me_irl\s*", "", title, flags=IGNORECASE)
     title = sub(r"\s*woof_irl\s*", "", title, flags=IGNORECASE)
+    title = sub(r"\s*maybe maybe( maybe)?(...)?\s*", "", title, flags=IGNORECASE)
     return title
 
 # Format a post title.
