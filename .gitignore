@@ -5,6 +5,8 @@ settings.yml
 
 development_files/
 
+*.log
+
 # Shell Files
 *.sh
 
