@@ -3,6 +3,7 @@ from praw.models import TextArea
 
 import settings
 import reddit
+from sentry import capture_exception
 from templates import get_leaderboard_templates
 
 user_to_score = {}
@@ -38,7 +39,8 @@ def update_score(username, amount):
             else:
                 user_to_score[username] += amount
                 reddit.get_subreddit().flair.set(username, score_flair_template["text"].format(user_to_score[username]))
-        except:
+        except Exception as e:
+            capture_exception(e)
             print("Error updating score.")
     else:
         print("Invalid username provided for score update.")
@@ -65,5 +67,6 @@ def update_leaderboard():
         else:
             print("Unable to find the correct widget.")
     except Exception as e:
+        capture_exception(e)
         print(f"{e} - Problem with updating leaderboard.")
         pass

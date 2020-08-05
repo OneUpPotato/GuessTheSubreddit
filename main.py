@@ -2,13 +2,17 @@ from time import time, sleep
 from threading import Thread
 from datetime import datetime, timedelta
 
-from settings import load_configs, get_settings
+from sentry import init_sentry
+from settings import load_configs, get_settings, get_sentry_url
 
 from points_handler import update_leaderboard
 from post_handler import check_posts, submit_post
 
 # Load all the configuration files in settings.
 load_configs()
+
+# Initiate sentry after the configs have been loaded.
+init_sentry(get_sentry_url())
 
 # Update the leaderboard when the bot starts.
 update_leaderboard()
@@ -44,4 +48,4 @@ def every(seconds, task):
 # submit_post - 1800 seconds = 30 minutes.
 Thread(target=lambda: every(300, check_posts)).start()
 Thread(target=lambda: every(1800, submit_post)).start()
-print("Started Threads")
+print("Started thread timers.")

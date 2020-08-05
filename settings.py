@@ -50,3 +50,7 @@ def get_flairs():
 # Get the discord webhook URL to post new submissions.
 def get_submissions_webhook():
     return getenv("DISCORD_SUBMISSIONS_WEBHOOK")
+
+# Get the Sentry URL from the env file.
+def get_sentry_url():
+    return getenv("SENTRY_URL")

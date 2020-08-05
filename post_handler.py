@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from random import choice, sample, randint, shuffle
 
 import settings
+from sentry import capture_exception
 from reddit import get_reddit, get_subreddit, get_reddit_username
 from webhooks import post_submissions_webhook
 from points_handler import update_leaderboard, update_score
@@ -286,6 +287,7 @@ def close_post(post_id):
                 comment.reply(comment_reply_templates["error"])
                 pass
     except Exception as e:
+        capture_exception(e)
         print(f"{e} - Error closing post.")
         pass
 
