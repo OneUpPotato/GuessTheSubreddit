@@ -1,21 +1,30 @@
 from os import getenv
 from dotenv import load_dotenv
 
+settings = {}
+subreddits_list = []
+
+# Load the .env file.
+load_dotenv(verbose=True)
+
+# Get the required Reddit login info.
+def get_reddit_login_info():
+    return {
+        "client_id": getenv("REDDIT_CLIENT_ID"),
+        "client_secret": getenv("REDDIT_CLIENT_SECRET"),
+        "refresh_token": getenv("REDDIT_REFRESH_TOKEN"),
+    }
+
 from helpers import load_jsoc
 from post_handler import load_wiki
 from points_handler import load_scores
-
-settings = {}
-subreddits_list = []
 
 # Load all the configuration files.
 # This is the first thing called in main.py
 def load_configs():
     global settings, subreddits_list
 
-    # Load the .env, settings.yml and subreddits.yml files.
-    load_dotenv(verbose=True)
-
+    # Load the settings.yml and subreddits.yml files.
     settings = load_jsoc("settings.yml")
     subreddits_list = [subreddit.lower() for subreddit in load_jsoc("subreddits.yml")["subreddits"]]
 
