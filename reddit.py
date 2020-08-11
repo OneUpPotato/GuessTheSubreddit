@@ -2,7 +2,8 @@ import praw
 
 import settings
 
-reddit_instance = praw.Reddit("GuessTheSubreddit", user_agent="GuessTheSubreddit Bot v1.1 (by u/OneUpPotato)")
+reddit_instance = praw.Reddit(**settings.get_reddit_login_info(), user_agent="GuessTheSubreddit Bot v2.0 (by u/OneUpPotato)")
+print(f"Succesfully accessed Reddit as u/{reddit_instance.user.me().name}")
 
 def get_reddit():
     return reddit_instance
