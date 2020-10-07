@@ -1,15 +1,4 @@
-{
-    # This is an example file for 'subreddits.yml'.
-    # The full subreddit list used on r/GuessTheSubreddit is currently hidden to prevent it being abused.
-    "subreddits": [
-        # Category 1
-        "subreddit1",
-        "subreddit2",
-        "subreddit3",
-
-        # Category 2
-        "subreddit4",
-        "subreddit5",
-        "subreddit6",
-    ],
-}
+# This is an example list, not the list used by the actual bot.
+- aww
+- pics
+- memes
