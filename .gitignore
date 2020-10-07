@@ -1,11 +1,10 @@
-praw.ini
-
-subreddits.yml
+# Configuration Files
 settings.yml
+subreddits.yml
 
-development_files/
-
+# Development FIles
 *.log
+development_files/
 
 # Shell Files
 *.sh
