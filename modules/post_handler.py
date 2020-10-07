@@ -105,7 +105,8 @@ class PostsHandler:
         type_text = type_settings["type_text"]
         if type == "fillblank":
             # Give how many characters are in the subreddit name.
-            text = f"r/{'_' * len(subreddit)} ({len(subreddit)} characters)"
+            name_hint = "".join([choice(["🎃", "☠", "👻"]) for _ in range(0, len(subreddit))])
+            text = f"r/{name_hint} ({len(subreddit)} characters)"
 
             type_text = type_text.format(text)
         elif type == "jumbled":
