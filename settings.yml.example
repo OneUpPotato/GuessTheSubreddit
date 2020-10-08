@@ -9,7 +9,7 @@ toggles:
     check_posts_on_start: false
 
 # How long a post should be open for until guessing is stopped. (in minutes)
-post_expiry_time: 60
+post_expiry_time: 360
 
 # The flair settings.
 flairs:
