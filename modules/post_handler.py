@@ -143,7 +143,7 @@ class PostsHandler:
             type_text = f"{seperator}{type_text}{seperator}"
 
         # Get the closing time.
-        closing_time = (get_current_utc() + timedelta(minutes=self.bot.settings.general["post_expiry_time"])).strftime("%d/%m/%Y at %H:%M")
+        closing_time = (get_current_utc() + timedelta(seconds=self.bot.settings.general["post_expiry_time"])).strftime("%d/%m/%Y at %H:%M")
         closure_info = self.bot.settings.general["templates"]["comments"]["post"]["closure_info"]["default"].format(closing_time=closing_time)
 
         # Format the gathered info into the main comment template.
