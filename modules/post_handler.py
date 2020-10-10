@@ -88,7 +88,7 @@ class PostsHandler:
         :param info: The post info to store.
         """
         self.pid_to_info[post_id] = info
-        self.pid_to_expiry[post_id] = get_utc_timestamp() + self.bot.settings.general["post_expiry_time"]
+        self.pid_to_expiry[post_id] = get_utc_timestamp() + (self.bot.settings.general["post_expiry_time"] * 60)
         self.ignore_posts.append(info["org_pid"])
 
         # Save the new additions.
