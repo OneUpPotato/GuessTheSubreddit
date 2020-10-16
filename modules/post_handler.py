@@ -110,7 +110,7 @@ class PostsHandler:
             type_text = type_text.format(text)
         elif type == "jumbled":
             # Shuffle the characters in the subreddit name.
-            chars = list(subreddit)
+            chars = list(subreddit.split(""))
             shuffle(chars)
             text = "r/" + "".join(chars)
 
@@ -219,7 +219,8 @@ class PostsHandler:
         subreddit_submission.flair.select(self.bot.settings.general["flairs"]["post"][type])
 
         # Reply with the hint comment.
-        sleep(15)
+        comment = None
+        sleep(5)
         try:
             comment = subreddit_submission.reply(
                 self.comment_text(
@@ -234,6 +235,7 @@ class PostsHandler:
         except Exception as e:
             self.bot.sentry.capture_exception(e)
             pass
+        sleep(5)
 
         # Store the post information.
         self.store_info(
