@@ -33,3 +33,7 @@ class Settings:
     @property
     def submissions_webhook(self) -> str:
         return getenv("DISCORD_SUBMISSIONS_WEBHOOK")
+
+    @property
+    def sentry_url(self) -> str:
+        return getenv("SENTRY_URL")

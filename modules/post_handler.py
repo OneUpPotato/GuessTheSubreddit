@@ -111,7 +111,7 @@ class PostsHandler:
             type_text = type_text.format(text)
         elif type == "jumbled":
             # Shuffle the characters in the subreddit name.
-            chars = list(subreddit)
+            chars = list(subreddit.split(""))
             shuffle(chars)
             text = "r/" + "".join(chars)
 
@@ -220,17 +220,23 @@ class PostsHandler:
         subreddit_submission.flair.select(self.bot.settings.general["flairs"]["post"][type])
 
         # Reply with the hint comment.
-        sleep(30)
-        comment = subreddit_submission.reply(
-            self.comment_text(
-                type,
-                submission.subreddit.display_name.lower(),
+        comment = None
+        sleep(5)
+        try:
+            comment = subreddit_submission.reply(
+                self.comment_text(
+                    type,
+                    submission.subreddit.display_name.lower(),
+                )
             )
-        )
 
-        # Distinguish and lock the main comment.
-        comment.mod.distinguish(how="yes", sticky=True)
-        comment.mod.lock()
+            # Distinguish and lock the main comment.
+            comment.mod.distinguish(how="yes", sticky=True)
+            comment.mod.lock()
+        except Exception as e:
+            self.bot.sentry.capture_exception(e)
+            pass
+        sleep(5)
 
         # Store the post information.
         self.store_info(
@@ -288,44 +294,48 @@ class PostsHandler:
         correct_subreddit = sub("^[^a-zA-Z0-9]*|[^a-zA-Z0-9]", "", post_info["org_sub"])
 
         # Go through the comments and award.
-        for comment in post.comments:
-            # Skip the comment if it isn't a parent.
-            if isinstance(comment, MoreComments):
-                continue
+        try:
+            for comment in post.comments:
+                # Skip the comment if it isn't a parent.
+                if isinstance(comment, MoreComments):
+                    continue
 
-            # Skip the comment it was deleted by the user or the user who made it no longer exists.
-            try:
-                comment.body
-                comment.author.id
-            except:
-                continue
+                # Skip the comment it was deleted by the user or the user who made it no longer exists.
+                try:
+                    comment.body
+                    comment.author.id
+                except:
+                    continue
 
-            # Skip the comment if it was made by the bot.
-            if comment.author == self.bot.reddit.user.me():
-                continue
+                # Skip the comment if it was made by the bot.
+                if comment.author == self.bot.reddit.user.me():
+                    continue
 
-            # Check if the user has already guessed on this post.
-            if comment.author.name in already_awarded.keys():
-                if already_awarded[comment.author.name] == False:
-                    comment.reply(reply_templates["not_allowed"])
-                    already_awarded[comment.author.name] = True
-                continue
+                # Check if the user has already guessed on this post.
+                if comment.author.name in already_awarded.keys():
+                    if already_awarded[comment.author.name] == False:
+                        comment.reply(reply_templates["not_allowed"])
+                        already_awarded[comment.author.name] = True
+                    continue
 
-            # Check the comment to see if it was correct.
-            body = comment.body.lower().strip()
-            guess = body[body.find("r/") + 1:].split(" ")[0].split("]")[0] ## TODO CHECK THE FIND ON HERE
-            guess = sub("^[^a-zA-Z0-9]*|[^a-zA-Z0-9]", "", guess)
+                # Check the comment to see if it was correct.
+                body = comment.body.lower().strip()
+                guess = body[body.find("r/") + 1:].split(" ")[0].split("]")[0] ## TODO CHECK THE FIND ON HERE
+                guess = sub("^[^a-zA-Z0-9]*|[^a-zA-Z0-9]", "", guess)
 
-            if guess == correct_subreddit:
-                # Mark that the user has guessed correctly (and have not been sent a message yet if they do a second guess on the same post)
-                already_awarded[comment.author.name] = False
+                if guess == correct_subreddit:
+                    # Mark that the user has guessed correctly (and have not been sent a message yet if they do a second guess on the same post)
+                    already_awarded[comment.author.name] = False
 
-                # Reply to their comment and update their score.
-                comment.reply(reply_templates["correct"].format(points=points))
-                self.bot.points.update_score(comment.author.name, points)
-            else:
-                # They guessed incorrectly.
-                comment.reply(reply_templates["incorrect"].format(correct_subreddit=correct_subreddit))
+                    # Reply to their comment and update their score.
+                    comment.reply(reply_templates["correct"].format(points=points))
+                    self.bot.points.update_score(comment.author.name, points)
+                else:
+                    # They guessed incorrectly.
+                    comment.reply(reply_templates["incorrect"].format(correct_subreddit=correct_subreddit))
+        except Exception as e:
+            self.bot.sentry.capture_exception(e)
+            pass
 
         # Delete all the post info.
         del self.pid_to_info[post_id]
@@ -348,7 +358,7 @@ class PostsHandler:
                 self.close_post(post_id)
 
         # Update the wiki and leaderboard if at least one post was closed.
-        if posts_closed >= 1:
+        if posts_closed:
             self.update_info()
             self.bot.widgets.update()
 
