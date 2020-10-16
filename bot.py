@@ -1,3 +1,5 @@
+import sentry_sdk
+
 from utils.reddit import GTSReddit
 from utils.settings import Settings
 
@@ -13,6 +15,12 @@ class GuessTheSubreddit:
 
         # Initiate the Reddit instance.
         self.reddit = GTSReddit(settings=self.settings)
+
+        # Initiate Sentry (if a URL is provided in the ENV file)
+        self.sentry = None
+        if self.settings.sentry_url:
+            self.sentry = sentry_sdk
+            self.sentry.init(self.settings.sentry_url)
 
         # Initiate sections of the bot.
         self.points = PointsHandler(bot=self)

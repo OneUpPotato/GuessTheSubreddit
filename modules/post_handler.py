@@ -231,7 +231,8 @@ class PostsHandler:
             # Distinguish and lock the main comment.
             comment.mod.distinguish(how="yes", sticky=True)
             comment.mod.lock()
-        except:
+        except Exception as e:
+            self.bot.sentry.capture_exception(e)
             pass
 
         # Store the post information.
@@ -329,7 +330,8 @@ class PostsHandler:
                 else:
                     # They guessed incorrectly.
                     comment.reply(reply_templates["incorrect"].format(correct_subreddit=correct_subreddit))
-        except:
+        except Exception as e:
+            self.bot.sentry.capture_exception(e)
             pass
 
         # Delete all the post info.

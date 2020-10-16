@@ -36,7 +36,7 @@ class PointsHandler:
         username = username.lower()
 
         # Check if the user has a score already.
-        if username in self.scores.keys():
+        if username not in self.scores.keys():
             self.scores[username] = amount
             self.bot.reddit.main_subreddit.flair.set(
                 username,

@@ -31,7 +31,8 @@ class Schedular:
 
             try:
                 task()
-            except:
+            except Exception as e:
+                self.bot.sentry.capture_exception(e)
                 pass
 
             next_time += (time() - next_time) // seconds * seconds + seconds
