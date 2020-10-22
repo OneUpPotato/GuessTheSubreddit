@@ -118,7 +118,7 @@ class PostsHandler:
             type_text = type_text.format(text)
         elif type == "multi":
             # Get three other random subreddits to show in the list.
-            list = sample([sub for sub in self.bot.settings.subreddits if sub != subreddit], 3) + [subreddit]
+            multi_list = sample([sub for sub in self.bot.settings.subreddits if sub != subreddit], 3) + [subreddit]
 
             # Check if the subreddit has a group subreddit.
             grouped_sub = None
@@ -130,13 +130,13 @@ class PostsHandler:
             if grouped_sub != None:
                 # There is a chance of using the group subreddit.
                 if randint(0, 1) == 1:
-                    del list[0]
-                    list.append(grouped_sub)
+                    del multi_list[0]
+                    multi_list.append(grouped_sub)
 
             # Shuffle the list.
-            shuffle(list)
+            shuffle(multi_list)
 
-            type_text = type_text.format(*list)
+            type_text = type_text.format(*multi_list)
 
         # Wrap the type_text in section seperators.
         seperator = "\n\n&#x200B;\n\n"
