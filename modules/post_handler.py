@@ -111,7 +111,7 @@ class PostsHandler:
             type_text = type_text.format(text)
         elif type == "jumbled":
             # Shuffle the characters in the subreddit name.
-            chars = list(subreddit.split(""))
+            chars = list(subreddit)
             shuffle(chars)
             text = "r/" + "".join(chars)
 
