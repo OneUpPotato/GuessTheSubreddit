@@ -30,9 +30,9 @@ def load_yaml(filepath: str) -> Union[dict, list]:
 def redact_title(title: str) -> str:
     """
     Remove anything that could indicate the subreddit in the title.
-    \s* = Ignore Whitespace
-    :return
+    :return: The title redacted to not give away the subreddit.
     """
+    # \s* = Ignore Whitespace
     title = sub(r"\s*🔥\s*", " ", title)
     title = sub(r"\s*\[?P(hoto)?S(hop)?Battles\]?\s*", "", title, flags=IGNORECASE)
     title = sub(r"\s*me_irl\s*", "", title, flags=IGNORECASE)
@@ -75,12 +75,10 @@ def post_webhook(url: str, embed: dict) -> None:
     """
     post(
         url,
-        data=dumps(
-            {
-                "embeds": [embed],
-            }
-        ),
+        data=dumps({
+            "embeds": [embed],
+        }),
         headers={
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
         },
     )

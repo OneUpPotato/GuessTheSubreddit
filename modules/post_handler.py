@@ -16,10 +16,13 @@ class PostsHandler:
         self.bot = bot
 
         self.post_types = [
-            "standard", # Standard
-            "multi", # Multiple Choice
-            "fillblank", # Fill the blank.
-            "jumbled", # Obfuscation
+            "standard",  # Standard
+            "multi",  # Multiple Choice
+            "fillblank",  # Fill the blank.
+            "jumbled",  # Obfuscation
+
+            "sounds",  # Vowels and Consonants
+            "revealed",  # Revealed Letters
         ]
 
         # Load all of the active post info required.
@@ -62,7 +65,7 @@ class PostsHandler:
         }
 
         # Search for a post on a random subreddit.
-        while search["found"] == False:
+        while search["found"] is False:
             submissions = []
             for submission in self.bot.reddit.subreddit(search["subreddit"]).top("day", limit=25):
                 if submission.domain.lower() == "i.redd.it":
@@ -105,7 +108,19 @@ class PostsHandler:
         type_text = type_settings["type_text"]
         if type == "fillblank":
             # Give how many characters are in the subreddit name.
-            text = f"r/{'_' * len(subreddit)} ({len(subreddit)} characters)"
+
+            text = "``r/"
+
+            blank_char = "*"
+            for char in subreddit:
+                text += blank_char
+
+                if blank_char == "*":
+                    blank_char = "-"
+                else:
+                    blank_char = "*"
+
+            text += f"`` ({len(subreddit)} characters)"
 
             type_text = type_text.format(text)
         elif type == "jumbled":
@@ -126,7 +141,7 @@ class PostsHandler:
                     grouped_sub = subreddit
                     break
 
-            if grouped_sub != None:
+            if grouped_sub is not None:
                 # There is a chance of using the group subreddit.
                 if randint(0, 1) == 1:
                     del multi_list[0]
@@ -136,6 +151,52 @@ class PostsHandler:
             shuffle(multi_list)
 
             type_text = type_text.format(*multi_list)
+        elif type == "sounds":
+            vowels = ["a", "e", "i", "o", "u"]
+            consonants = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"]
+
+            count = {"vowels": 0, "consonants": 0, "other": 0}
+            for char in subreddit.lower():
+                if char in vowels:
+                    count["vowels"] += 1
+                elif char in consonants:
+                    count["consonants"] += 1
+                else:
+                    count["other"] += 1
+
+            text = "``r/"
+
+            blank_char = "*"
+            for char in subreddit:
+                text += blank_char
+
+                if blank_char == "*":
+                    blank_char = "-"
+                else:
+                    blank_char = "*"
+            text += "``\n\n{vowels} vowels, {consonants} consonants and {other} other characters.".format(**count)
+
+            type_text = type_text.format(text)
+        elif type == "revealed":
+            text = "``r/"
+
+            revealed = 0
+            blank_char = "*"
+            for char in subreddit:
+                if not revealed or randint(1, 4) == 1:
+                    text += char
+                    revealed += 1
+                else:
+                    text += blank_char
+
+                    if blank_char == "*":
+                        blank_char = "-"
+                    else:
+                        blank_char = "*"
+
+            text += f"`` ({revealed} characters revealed, {len(subreddit)} total characters)"
+
+            type_text = type_text.format(text)
 
         # Wrap the type_text in section seperators.
         seperator = "\n\n&#x200B;\n\n"
@@ -171,7 +232,7 @@ class PostsHandler:
         try:
             permalink = original_post.permalink
             post_info["org_auth"] = original_post.author.name
-        except:
+        except Exception:
             post_info["org_auth"] = "[deleted]"
             pass
 
@@ -193,7 +254,6 @@ class PostsHandler:
             type_text=type_text,
         )
 
-
     def submit_post(self, type: str = None) -> None:
         """
         Submits a new guess the subreddit post.
@@ -201,7 +261,7 @@ class PostsHandler:
         """
         print("POSTS: Posting a new submission.")
 
-        if type == None:
+        if type is None:
             type = choice(self.post_types)
 
         # Get a random submission.
@@ -303,7 +363,7 @@ class PostsHandler:
                 try:
                     comment.body
                     comment.author.id
-                except:
+                except Exception:
                     continue
 
                 # Skip the comment if it was made by the bot.
@@ -312,14 +372,14 @@ class PostsHandler:
 
                 # Check if the user has already guessed on this post.
                 if comment.author.name in already_awarded.keys():
-                    if already_awarded[comment.author.name] == False:
+                    if already_awarded[comment.author.name] is False:
                         comment.reply(reply_templates["not_allowed"])
                         already_awarded[comment.author.name] = True
                     continue
 
                 # Check the comment to see if it was correct.
                 body = comment.body.lower().strip()
-                guess = body[body.find("r/") + 1:].split(" ")[0].split("]")[0] ## TODO CHECK THE FIND ON HERE
+                guess = body[body.find("r/") + 1:].split(" ")[0].split("]")[0]
                 guess = sub("^[^a-zA-Z0-9]*|[^a-zA-Z0-9]", "", guess)
 
                 if guess == correct_subreddit:

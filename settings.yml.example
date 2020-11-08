@@ -18,6 +18,8 @@ flairs:
         multi: cf9cf898-4049-11ea-9cd2-0e3247f312c5
         fillblank: 63ee0c44-49fa-11ea-a5e2-0e9b2137d67d
         jumbled: 43da7fd4-bfb9-11ea-8ba0-0ee5376e3101
+        sounds: 5ebc2f3c-2215-11eb-ae98-0e97d626b887
+        revealed: 66035734-2215-11eb-9949-0e61a9885c6b
     user:
         score:
             id: b76716ce-4048-11ea-804a-0e638e9bf59b
@@ -26,10 +28,10 @@ flairs:
 # Settings for each post type.
 types:
     standard:
-        points_awarded: 3
+        points_awarded: 4
         type_text: ""
     fillblank:
-        points_awarded: 2
+        points_awarded: 3
         type_text: |-
             *Fill in the Blank*
 
@@ -61,6 +63,18 @@ types:
             -
                 - example3
                 - example4
+    sounds:
+        points_awarded: 2
+        type_text: |-
+            *Vowels and Consonants*
+
+            {}
+    revealed:
+        points_awarded: 2
+        type_text: |-
+            *Revealed Letters*
+
+            {}
 
 # General Templates
 templates:
