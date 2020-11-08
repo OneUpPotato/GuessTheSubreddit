@@ -13,9 +13,6 @@ class Schedular:
         submission_thread = Thread(target=lambda: self.every(1800, self.bot.posts.submit_post))
         submission_thread.start()
 
-        self.bot.posts.submit_post("sounds")
-        self.bot.posts.submit_post("revealed")
-
         # Post and/or check posts on start depending on the settings.
         if self.bot.settings.general["toggles"]["post_on_start"]:
             Thread(target=self.bot.posts.submit_post).start()
