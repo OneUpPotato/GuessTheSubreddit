@@ -1,13 +1,33 @@
+"""
+Copyright (c) 2020 OneUpPotato
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 from sortedcollections import ValueSortedDict
 
 from num2words import num2words
 
 from textwrap import dedent
 
+from utils.database import Session, WeeklyScores
+
+
 class PointsHandler:
     def __init__(self, bot) -> None:
         self.bot = bot
         self.flair_settings = self.bot.settings.general["flairs"]
+
+        self.db_session = Session()
 
         # Load all of the scores.
         self.load_scores()
@@ -49,6 +69,19 @@ class PointsHandler:
                 username,
                 self.flair_settings["user"]["score"]["text"].format(self.scores[username]),
             )
+
+        # Update the weekly leaderboard stats.
+        result = self.db_session.query(WeeklyScores).filter_by(username=username).first()
+        if result is not None:
+            result.score += amount
+        else:
+            self.db_session.add(
+                WeeklyScores(
+                    username=username,
+                    score=amount,
+                )
+            )
+        self.db_session.commit()
 
     def generate_leaderboard_table(self):
         """

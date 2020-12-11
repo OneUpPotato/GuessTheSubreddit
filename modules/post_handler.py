@@ -1,3 +1,18 @@
+"""
+Copyright (c) 2020 OneUpPotato
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 from praw.models import Submission, MoreComments
 
 from textwrap import dedent
@@ -9,7 +24,9 @@ from random import randint, choice, sample, shuffle
 from time import sleep
 from datetime import timedelta
 
+from utils.database import Session, WeeklyScores
 from utils.helpers import format_title, get_current_utc, get_utc_timestamp, post_webhook, format_time
+
 
 class PostsHandler:
     def __init__(self, bot) -> None:
@@ -293,7 +310,10 @@ class PostsHandler:
             comment.mod.distinguish(how="yes", sticky=True)
             comment.mod.lock()
         except Exception as e:
-            self.bot.sentry.capture_exception(e)
+            if self.bot.sentry:
+                self.bot.sentry.capture_exception(e)
+            else:
+                print(e)
             pass
         sleep(5)
 
@@ -310,22 +330,23 @@ class PostsHandler:
         )
 
         # Send a message to the submissions feed.
-        post_webhook(
-            self.bot.settings.submissions_webhook,
-            {
-                "title": subreddit_submission.title,
-                "description": choice(
-                    [
-                        "There's a new post to guess on!",
-                        "A new post has been added! :)",
-                        "Guessing time! There's a new post.",
-                    ]
-                ),
-                "url": f"https://reddit.com{subreddit_submission.permalink}",
-                "image": {"url": subreddit_submission.url},
-                "timestamp": format_time(subreddit_submission.created_utc),
-            },
-        )
+        if self.bot.settings.submissions_webhook:
+            post_webhook(
+                self.bot.settings.submissions_webhook,
+                {
+                    "title": subreddit_submission.title,
+                    "description": choice(
+                        [
+                            "There's a new post to guess on!",
+                            "A new post has been added! :)",
+                            "Guessing time! There's a new post.",
+                        ]
+                    ),
+                    "url": f"https://reddit.com{subreddit_submission.permalink}",
+                    "image": {"url": subreddit_submission.url},
+                    "timestamp": format_time(subreddit_submission.created_utc),
+                },
+            )
 
         print("POSTS: Succesfully posted a new submission.")
 
@@ -393,7 +414,10 @@ class PostsHandler:
                     # They guessed incorrectly.
                     comment.reply(reply_templates["incorrect"].format(correct_subreddit=correct_subreddit))
         except Exception as e:
-            self.bot.sentry.capture_exception(e)
+            if self.bot.sentry:
+                self.bot.sentry.capture_exception(e)
+            else:
+                print(e)
             pass
 
         # Delete all the post info.
@@ -422,3 +446,37 @@ class PostsHandler:
             self.bot.widgets.update()
 
         print("POSTS: Succesfully checked posts.")
+
+    def submit_weekly_post(self) -> None:
+        """
+        Submits the weekly update post.
+        """
+        session = Session()
+
+        weekly_leaderboard = ""
+        totw_result = session.query(WeeklyScores).order_by(WeeklyScores.score.desc()).limit(10).all()
+        totw_range = range(len(totw_result))
+        for i in range(10):
+            if i in totw_range:
+                result = totw_result[i]
+                weekly_leaderboard += f"\n|{i + 1}|{result.username}|{result.score}|"
+            else:
+                weekly_leaderboard += f"\n|{i + 1}|-|-|"
+        weekly_leaderboard = weekly_leaderboard.strip()
+
+        session.query(WeeklyScores).delete()
+        session.commit()
+
+        session.close()
+
+        post_text = self.bot.settings.general["templates"]["posts"]["weekly_update"].format(
+            weekly_leaderboard=weekly_leaderboard,
+            current_leaderboard=self.bot.points.generate_leaderboard_table(),
+        )
+
+        self.bot.reddit.main_subreddit.submit(
+            title=f"Weekly Update ({get_current_utc().strftime('%d/%m/%Y')})",
+            selftext=post_text,
+        )
+
+        print("POSTS: Submitting weekly update post.")

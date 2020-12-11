@@ -78,6 +78,31 @@ types:
 
 # General Templates
 templates:
+    posts:
+        weekly_update: |-
+            # Beep Boop!
+
+            It's that time of the week. Here's the weekly statistics update.
+
+            &#x200B;
+
+            # Top of the Week
+
+            The users who have gained the most points this week.
+
+            |**Place**|**Username**|**Points Gained (this week)**|
+            |:-|:-|:-|
+            {weekly_leaderboard}
+
+            &#x200B;
+
+            # Current Leaderboard
+
+            The leaderboard as of the time of this post.
+
+            {current_leaderboard}
+
+            &#x200B;
     comments:
         post:
             main: |-
