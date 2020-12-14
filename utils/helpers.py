@@ -1,3 +1,18 @@
+"""
+Copyright (c) 2020 OneUpPotato
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 from praw.models import Submission
 
 from typing import Union
@@ -11,6 +26,7 @@ from re import sub, IGNORECASE
 
 from pytz import utc
 from datetime import datetime
+
 
 def load_yaml(filepath: str) -> Union[dict, list]:
     """
@@ -27,6 +43,7 @@ def load_yaml(filepath: str) -> Union[dict, list]:
         pass
     return yaml
 
+
 def redact_title(title: str) -> str:
     """
     Remove anything that could indicate the subreddit in the title.
@@ -40,6 +57,7 @@ def redact_title(title: str) -> str:
     title = sub(r"\s*maybe maybe( maybe)?(...)?\s*", "", title, flags=IGNORECASE)
     return title
 
+
 def format_title(title: str) -> str:
     """
     Format a title for the guessing post.
@@ -48,12 +66,14 @@ def format_title(title: str) -> str:
     title = redact_title(title).strip()[:294]
     return "[GTS] " + (title if len(title) >= 1 else "Guess The Subreddit")
 
+
 def format_time(timestamp: int) -> str:
     """
     Format a UNIX timestamp in ISO8601 time.
     :return: The formatted time.
     """
     return datetime.fromtimestamp(timestamp, utc).isoformat()
+
 
 def get_current_utc() -> datetime:
     """
@@ -62,12 +82,14 @@ def get_current_utc() -> datetime:
     """
     return datetime.now(utc)
 
+
 def get_utc_timestamp() -> int:
     """
     Get the current UTC timestamp.
     :return: The current UTC timestamp.
     """
     return int(datetime.timestamp(get_current_utc()))
+
 
 def post_webhook(url: str, embed: dict) -> None:
     """
